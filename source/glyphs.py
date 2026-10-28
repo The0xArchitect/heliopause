@@ -1069,6 +1069,21 @@ def comma_shape(p):
     return [dot(0, cy, r), tail]
 
 
+def comet(head, r, tail_end, tail_w):
+    """Round head with a straight tapering tail; the tail's edges are true
+    tangents to the head, so the two flow together without a corner."""
+    u = _unit(tail_end[0] - head[0], tail_end[1] - head[1])
+    n = (-u[1], u[0])
+    pts = []
+    for s in (1, -1):
+        E = (tail_end[0] + s * n[0] * tail_w / 2, tail_end[1] + s * n[1] * tail_w / 2)
+        b = math.atan2(E[1] - head[1], E[0] - head[0])
+        a = b + s * math.acos(r / math.hypot(E[0] - head[0], E[1] - head[1]))
+        pts.append((ept(head[0], head[1], r, r, a), E))
+    (T1, E1), (T2, E2) = pts
+    return [dot(head[0], head[1], r), poly([T1, E1, E2, T2])]
+
+
 @glyph('comma', 0x2C, ('D', 'D'))
 def g_comma(p, G):
     G.add(*comma_shape(p))
@@ -1143,6 +1158,15 @@ def g_qdr(p, G):
 def g_qdl(p, G):
     g_qdr(p, G)
     G.transform(rotate_fn(0, CAP + 30 - p.rd - 60, 180))
+
+
+@glyph('grave', 0x60, ('D', 'D'))
+def g_grave(p, G):
+    # a comet streaking down to the right
+    r = p.rd * 0.8
+    a = math.radians(-38)
+    head = (0, CAP + 30 - r)
+    G.add(*comet(head, r, (head[0] + 210 * math.cos(a), head[1] + 210 * math.sin(a)), 0.22 * r))
 
 
 @glyph('hyphen', 0x2D, ('D', 'D'))
@@ -1222,6 +1246,23 @@ def g_equal(p, G):
     W = 460 + 0.2 * p.g
     o = p.H / 2 + 50
     G.add(rect(0, AXIS + o - p.H / 2, W, AXIS + o + p.H / 2), rect(0, AXIS - o - p.H / 2, W, AXIS - o + p.H / 2))
+
+
+@glyph('asciitilde', 0x7E, ('D', 'D'))
+def g_tilde(p, G):
+    # one period of a signal wave: two equal orbits meeting on a shared
+    # tangent at the centre, ends cut square to the stroke
+    Wc = 410 + 0.8 * p.g           # centreline end to end
+    A = 48 + 0.15 * p.g            # centreline amplitude
+    t = p.Ct
+    phi = 2 * math.atan(A / (Wc / 4))
+    rho = (Wc / 4) / math.sin(phi)
+    s, c = math.sin(phi), math.cos(phi)
+    ro, ri = rho + t / 2, rho - t / 2
+    e = 0.03
+    G.add(band(-rho * s, AXIS - rho * c, ro, ro, ri, ri, ('a', PI / 2 + phi), ('a', PI / 2 - phi - e)),
+          band(rho * s, AXIS + rho * c, ro, ro, ri, ri, ('a', 1.5 * PI - phi - e), ('a', 1.5 * PI + phi)))
+    center_on_axis(G)
 
 
 def chevron(p, h, depth):
@@ -1337,6 +1378,14 @@ def g_al(p, G):
     G.add(*arrow_up(p))
     G.transform(rotate_fn(0, CAP / 2, 90))
     G.transform(lambda q: (q[0], q[1] - CAP / 2 + AXIS))
+
+
+@glyph('asciicircum', 0x5E, ('D', 'D'))
+def g_circum(p, G):
+    # lift-off: the arrowhead of the up arrow, steeper and without its shaft
+    hw, dep = 210 + 0.5 * p.g, 290
+    cs, _ = zigzag([(-hw, CAP - dep, 0), (0, CAP, 0.55 * p.S), (hw, CAP - dep, 0)], p.wd * 0.95)
+    G.add(*cs)
 
 
 @glyph('at', 0x40, ('R', 'R'))
