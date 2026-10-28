@@ -1044,6 +1044,63 @@ def f8(p, G):
 
 
 # =====================================================================
+# currency (tabular, so prices line up with the figures)
+# =====================================================================
+
+@fig_glyph('dollar', 0x24)
+def f_dollar(p, G):
+    R = p.R
+    G.add(*s_shape(CAP + 10, -10, R * 0.86, R * 0.93, p.Ct * 0.92, p.Cs * 0.97, share=0.47))
+    w, reach = 0.75 * p.S, 130 + 0.5 * p.g
+    G.add(rect(-w / 2, CAP - 20, w / 2, CAP + reach), rect(-w / 2, -reach, w / 2, 20))
+
+
+@fig_glyph('euro', 0x20AC)
+def f_euro(p, G):
+    R, H = p.R, p.H
+    rx, ry = R * 0.86, CAP / 2 + 10
+    cx = R - rx
+    rxi, ryi = rx - p.Cs, ry - p.Ct
+    off = min(0.62 * ry, ryi - 25)
+    G.add(band(cx, CAP / 2, rx, ry, rxi, ryi, ('h', CAP / 2 + off, 0.7), ('h', CAP / 2 - off, TAU - 0.7)))
+    o = (H + 0.7 * H + 20) / 2           # the gap between the bars grows with them
+    for y in (CAP / 2 - o, CAP / 2 + o):
+        G.add(rect(-R, y - H / 2, cx + 0.2 * rxi, y + H / 2))
+
+
+@fig_glyph('sterling', 0xA3)
+def f_sterling(p, G):
+    # the f's hook on a stem, a crossbar and a full-width foot
+    S, H, R = p.S, p.H, p.R
+    sL = -0.55 * R
+    rxo = 155 + 0.6 * p.g
+    ycH = CAP - 165 - 0.5 * p.g
+    ryo = CAP + 10 - ycH
+    hook = band(sL + rxo, ycH, rxo, ryo, rxo - S, ryo - p.Ct, ('a', PI + 0.06), ('a', 0.55))
+    yc = 0.42 * CAP
+    G.add(rect(sL, H - 2, sL + S, ycH), hook, rect(sL - 95, yc - H / 2, sL + S + 130, yc + H / 2),
+          rect(-R, 0, R, H))
+
+
+@fig_glyph('rupee', 0x20B9)
+def f_rupee(p, G):
+    # the headline rounds into the bowl (the ra hanging from its
+    # shirorekha), the second line stops flush with the bowl's outer edge,
+    # and the leg leaves the bowl's lower flat at its left end
+    R = p.R
+    h = p.H * 0.9                      # three stacked bars: a little lighter
+    ylo = 0.36 * CAP - 0.6 * p.g
+    ryo = (CAP - ylo) / 2
+    rxo = 0.85 * ryo
+    xf, cy = R - rxo, (CAP + ylo) / 2
+    G.add(*dbowl(-R, xf, ylo, CAP, rxo, p.Cs, h))
+    top2 = CAP - h - 0.6 * h
+    G.add(rect(-R, top2 - h, xf + rxo * math.sqrt(1 - ((top2 - cy) / ryo) ** 2), top2))
+    t, b = diag_fit(-R, ylo + h, 0.72 * R, 0, p.wd, -1, +1)
+    G.add(diag(t, b, p.wd))
+
+
+# =====================================================================
 # punctuation and symbols
 # =====================================================================
 
