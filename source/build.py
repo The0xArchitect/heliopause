@@ -17,7 +17,7 @@ from glyphs import build_glyphs, XH, CAP, ASC, DESC
 from kerning import kern_fea
 
 FAMILY = 'Heliopause'
-VERSION = '0.6'
+VERSION = '0.7'
 ROOT = os.path.join(os.path.dirname(__file__), '..')
 OUT = {'otf': os.path.join(ROOT, 'otf'),
        'ttf': os.path.join(ROOT, 'ttf'),

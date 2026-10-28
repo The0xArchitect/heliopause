@@ -25,12 +25,17 @@
   .row { display: flex; gap: 32px; flex-wrap: wrap; align-items: baseline; }
   .tele { font-size: clamp(32px, 6vw, 56px); font-weight: 600; letter-spacing: .02em; }
   .note { color: var(--muted); font-size: 14px; letter-spacing: .04em; }
+  .code { font-size: clamp(20px, 3.4vw, 30px); color: #c7cbd9; margin: 18px 0 0; overflow-wrap: anywhere; }
+  .ledger { max-width: 560px; font-size: clamp(22px, 4vw, 34px); }
+  .ledger p { display: flex; justify-content: space-between; gap: 24px; margin: 0; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .ledger span:first-child { color: var(--muted); }
+  .ledger span:last-child { font-weight: 600; }
   footer { margin-top: 64px; color: var(--muted); font-size: 14px; }
 </style>
 </head>
 <body>
 <main>
-  <div class="hud"><span>WAYPOINT 00 / TYPE SPECIMEN</span><span><b>●</b> HELIOPAUSE · v0.6</span></div>
+  <div class="hud"><span>WAYPOINT 00 / TYPE SPECIMEN</span><span><b>●</b> HELIOPAUSE · v0.7</span></div>
   <h1>Heliopause</h1>
   <p class="lede">A geometric sans built from scratch for xkid.org. Calm enough for long reading, cosmic in the details.</p>
 
@@ -45,7 +50,7 @@
 
   <section>
     <p class="label">CHARACTER SET</p>
-    <p class="grid">ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>abcdefghijklmnopqrstuvwxyz<br>0123456789 .,:;!?'"‘’“”…<br>()[]/\|-–—_ +=&lt;&gt;×*#%@ °·• ←↑→↓</p>
+    <p class="grid">ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>abcdefghijklmnopqrstuvwxyz<br>0123456789 $€£₹<br>.,:;!?¡¿'"‘’“”…«»‹›<br>()[]{}/\|-–—_ &amp;+=&lt;&gt;~^`×*#%@ °·• ←↑→↓</p>
   </section>
 
   <section>
@@ -59,12 +64,24 @@
   </section>
 
   <section>
+    <p class="label">CURRENCY · TABULAR</p>
+    <div class="ledger">
+      <p><span>Fuel</span><span>$4,200.00</span></p>
+      <p><span>Oxygen</span><span>€3,950.00</span></p>
+      <p><span>Telemetry</span><span>£1,180.50</span></p>
+      <p><span>Ground station</span><span>₹8,640.00</span></p>
+    </div>
+    <p class="note">Currency signs share the figures' width, so a column of prices lines up digit for digit.</p>
+  </section>
+
+  <section>
     <p class="label">x IS A VARIABLE</p>
     <div class="row">
       <span class="tele">x = cosmic</span>
       <span class="tele plain-x">x = plain</span>
       <span class="tele orbit-o">ORBIT</span>
     </div>
+    <p class="code plain-x">if (fuel &amp;&amp; $budget) { burn(`now`, x^2 ~ y); }</p>
     <p class="note">The default x has the orbital cross. Turn on ss03 for a plain x in code or math, and ss04 for an O with a planet dot.</p>
   </section>
 
@@ -87,7 +104,7 @@
     </div>
   </section>
 
-  <footer>Heliopause v0.6 · designed by xKid for xkid.org</footer>
+  <footer>Heliopause v0.7 · designed by xKid for xkid.org</footer>
 </main>
 </body>
 </html>
