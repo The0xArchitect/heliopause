@@ -1,0 +1,35 @@
+/* Heliopause by xKid, v0.6
+   Put the .woff2 files next to this CSS (or fix the paths), then:
+   font-family: 'Heliopause', system-ui, sans-serif;            */
+
+@font-face {
+  font-family: 'Heliopause';
+  src: url('Heliopause-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Heliopause';
+  src: url('Heliopause-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Heliopause';
+  src: url('Heliopause-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Optional extras
+   .plain-zero  -> 0 without the planet dot (the dotted 0 is the default)
+   .plain-x     -> x without the orbital cross (for code or math)
+   .hud-numbers -> already tabular by default, so clocks never jitter */
+.plain-zero { font-feature-settings: "ss02" 1; }
+.plain-x    { font-feature-settings: "ss03" 1; }
+.orbit-o    { font-feature-settings: "ss04" 1; }  /* O with a planet dot */

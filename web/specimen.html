@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heliopause specimen</title>
+<link rel="stylesheet" href="heliopause.css">
+<style>
+  :root { --bg: #06070e; --fg: #e9ecf5; --muted: #8b91a8; --line: #1c2136; --amber: #ffb547; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font-family: 'Heliopause', system-ui, sans-serif; }
+  main { max-width: 1120px; margin: 0 auto; padding: 56px 24px 96px; }
+  .hud { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 13px; letter-spacing: .14em; color: var(--muted); font-weight: 600; }
+  .hud b { color: var(--amber); font-weight: 600; }
+  h1 { font-size: clamp(64px, 14vw, 168px); line-height: .95; font-weight: 700; margin: 40px 0 12px; letter-spacing: -0.01em; }
+  .lede { font-size: clamp(20px, 3vw, 28px); line-height: 1.4; color: #c7cbd9; max-width: 760px; margin: 0; }
+  section { border-top: 1px solid var(--line); margin-top: 56px; padding-top: 28px; }
+  .label { font-size: 13px; letter-spacing: .14em; color: var(--amber); font-weight: 600; margin: 0 0 18px; }
+  .weights { display: grid; gap: 8px; }
+  .weights p { margin: 0; font-size: clamp(36px, 7vw, 72px); line-height: 1.1; }
+  .grid { font-size: clamp(28px, 5vw, 48px); line-height: 1.35; word-break: break-all; margin: 0; }
+  .body { columns: 2 320px; column-gap: 40px; font-size: 17px; line-height: 1.65; color: #d3d6e2; }
+  .body p { margin: 0 0 14px; }
+  .sizes p { margin: 0 0 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row { display: flex; gap: 32px; flex-wrap: wrap; align-items: baseline; }
+  .tele { font-size: clamp(32px, 6vw, 56px); font-weight: 600; letter-spacing: .02em; }
+  .note { color: var(--muted); font-size: 14px; letter-spacing: .04em; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="hud"><span>WAYPOINT 00 / TYPE SPECIMEN</span><span><b>●</b> HELIOPAUSE · v0.6</span></div>
+  <h1>Heliopause</h1>
+  <p class="lede">A geometric sans built from scratch for xkid.org. Calm enough for long reading, cosmic in the details.</p>
+
+  <section>
+    <p class="label">THREE WEIGHTS</p>
+    <div class="weights">
+      <p style="font-weight:400">Regular · x kid explorer</p>
+      <p style="font-weight:600">SemiBold · event horizon</p>
+      <p style="font-weight:700">Bold · voyager signal</p>
+    </div>
+  </section>
+
+  <section>
+    <p class="label">CHARACTER SET</p>
+    <p class="grid">ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>abcdefghijklmnopqrstuvwxyz<br>0123456789 .,:;!?'"‘’“”…<br>()[]/\|-–—_ +=&lt;&gt;×*#%@ °·• ←↑→↓</p>
+  </section>
+
+  <section>
+    <p class="label">TELEMETRY · TABULAR FIGURES</p>
+    <div class="row">
+      <span class="tele">T+ 00:42:07</span>
+      <span class="tele">SECTOR 0070</span>
+      <span class="tele">WAYPOINT 05</span>
+    </div>
+    <p class="note">Every 0 carries a planet dot by default (ss02 gives a plain 0). Numbers are tabular, so a ticking clock never jitters.</p>
+  </section>
+
+  <section>
+    <p class="label">x IS A VARIABLE</p>
+    <div class="row">
+      <span class="tele">x = cosmic</span>
+      <span class="tele plain-x">x = plain</span>
+      <span class="tele orbit-o">ORBIT</span>
+    </div>
+    <p class="note">The default x has the orbital cross. Turn on ss03 for a plain x in code or math, and ss04 for an O with a planet dot.</p>
+  </section>
+
+  <section class="sizes">
+    <p class="label">SIZES</p>
+    <p style="font-size:64px">SCROLL TO INITIATE BURN ↑</p>
+    <p style="font-size:40px">Waypoint 05 / Ring Plane</p>
+    <p style="font-size:24px">Past this point the sun is just another star.</p>
+    <p style="font-size:16px">Nobody knows what's inside. That's my favorite thing about it.</p>
+    <p style="font-size:13px; letter-spacing:.12em; font-weight:600">LUNA · BELT · JUPITER · SATURN · EVENT HORIZON · ANOTHER SUN</p>
+  </section>
+
+  <section>
+    <p class="label">BODY TEXT · 17PX</p>
+    <div class="body">
+      <p>In 1977 a small probe left Earth carrying a golden record. It is still out there, still sending signals home, long past the planets it was built to visit.</p>
+      <p>Somewhere past the heliopause the solar wind gives up and interstellar space begins. Nothing marks the line. You only know you crossed it by listening carefully to what the instruments say.</p>
+      <p>x is a variable. Some days it is cosmic, some days it is developer, some days it is just a question mark. kid is the constant. Curious, a bit stubborn, and still learning to listen.</p>
+      <p>See you around, explorer.</p>
+    </div>
+  </section>
+
+  <footer>Heliopause v0.6 · designed by xKid for xkid.org</footer>
+</main>
+</body>
+</html>
