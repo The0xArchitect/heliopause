@@ -1232,6 +1232,28 @@ def g_br(p, G):
     G.transform(mirror_x)
 
 
+@glyph('braceleft', 0x7B, ('R', 'D'))
+def g_bracel(p, G):
+    S, H = p.S, p.H
+    ym = 300                        # the parentheses' centre
+    rm, rc = S + 50, S + 70         # spur arc and corner arc, outer radii
+    xs = rm - S + 60                # stem left edge; the spur tip sits at x=0
+    cxm, cym = xs + S - rm, ym - H / 2 + rm
+    cxt, cyt = xs + rc, 770 - rc
+    half = [band(cxt, cyt, rc, rc, rc - S, rc - H, ('a', PI / 2), ('a', PI)),
+            rect(cxt - 1, 770 - H, xs + rc + 40, 770),
+            rect(xs, cym - 1, xs + S, cyt + 1),
+            band(cxm, cym, rm, rm, rm - S, rm - H, ('a', 0), ('a', -PI / 2)),
+            rect(0, ym - H / 2, cxm + 1, ym + H / 2)]
+    G.add(*half, *[c.map(lambda q: (q[0], 2 * ym - q[1])) for c in half])
+
+
+@glyph('braceright', 0x7D, ('D', 'R'))
+def g_bracer(p, G):
+    g_bracel(p, G)
+    G.transform(mirror_x)
+
+
 AXIS = 330
 
 
