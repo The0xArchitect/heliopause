@@ -1410,6 +1410,88 @@ def g_circum(p, G):
     G.add(*cs)
 
 
+def _support(rx, ry, n):
+    return math.hypot(rx * n[0], ry * n[1])
+
+
+def _touch(cx, cy, rx, ry, m):
+    """Point of an ellipse whose outward normal is m, as a param angle."""
+    h = _support(rx, ry, m)
+    return math.atan2(ry * m[1] / h, rx * m[0] / h)
+
+
+def inner_tangent(c1, r1, c2, r2, lo, hi):
+    """Internal common tangent of two ellipses (c1 on the left of the line,
+    c2 on the right), for a line direction angle between lo and hi.
+    Returns (angle on 1, angle on 2)."""
+    def gap(th):
+        n = (-math.sin(th), math.cos(th))
+        return (n[0] * (c1[0] - c2[0]) + n[1] * (c1[1] - c2[1])
+                - _support(*r1, n) - _support(*r2, n))
+    glo = gap(lo)
+    for _ in range(60):
+        mid = (lo + hi) / 2
+        if (gap(mid) > 0) == (glo > 0):
+            lo = mid
+        else:
+            hi = mid
+    n = (-math.sin(lo), math.cos(lo))
+    return (_touch(*c1, *r1, (-n[0], -n[1])), _touch(*c2, *r2, n))
+
+
+def ring_cut(cx, cy, rxo, ryo, rxi, ryi, t):
+    """The radial cut of an elliptical ring at param angle t, as a 'line' cut."""
+    a, b = ept(cx, cy, rxo, ryo, t), ept(cx, cy, rxi, ryi, t)
+    return ('line', a, (b[0] - a[0], b[1] - a[1])), (b[0] - a[0], b[1] - a[1])
+
+
+@glyph('ampersand', 0x26, ('R', 'D'))
+def g_amp(p, G):
+    Cs, Ct, w, g = p.CsC, p.CtC, p.wdC, p.g
+    # upper loop: a closed ring
+    rxl, ryl = 165 + 0.9 * g, 160 + 0.5 * g
+    xl, yl = -95, CAP + OSC - ryl
+    G.add(ellipse(xl, yl, rxl, ryl)).hole(ellipse(xl, yl, rxl - Cs, ryl - Ct))
+    # lower bowl, open to the upper right, ending in a tail
+    rxb, ryb = 245 + 0.6 * g, 228 + 0.3 * g
+    xb, yb = 30, ryb - OSC
+    cl = (rxl - Cs / 2, ryl - Ct / 2)
+    cb = (rxb - Cs / 2, ryb - Ct / 2)
+    # "/" leaves the loop's lower right on a tangent and flows into the bowl
+    ul, ub = inner_tangent((xl, yl), cl, (xb, yb), cb, 0.2, 1.5)
+    cut_l, vl = ring_cut(xl, yl, rxl, ryl, rxl - Cs, ryl - Ct, ul)
+    cut_b, vb = ring_cut(xb, yb, rxb, ryb, rxb - Cs, ryb - Ct, ub)
+    ub = ub % TAU
+    G.add(band(xb, yb, rxb, ryb, rxb - Cs, ryb - Ct, ('a', ub - 0.05), ('h', 0.47 * CAP, TAU + 0.4)))
+    b_top, b_bot = ept(xl, yl, *cl, ul), ept(xb, yb, *cb, ub)
+    # as wide as the thinner of the two rings it joins, measured square to it
+    nb = _unit(b_bot[1] - b_top[1], b_top[0] - b_bot[0])
+    wf = min(abs(vl[0] * nb[0] + vl[1] * nb[1]), abs(vb[0] * nb[0] + vb[1] * nb[1]))
+    G.add(diag(b_top, b_bot, wf, cut_l, cut_b))
+    # "\" leaves the loop's lower left on a tangent and runs to the baseline,
+    # solved so its foot lands just past the bowl
+    foot = xb + rxb + 20
+    lo, hi = PI + 0.05, 1.5 * PI - 0.05
+    for _ in range(50):
+        ua = (lo + hi) / 2
+        P0 = ept(xl, yl, *cl, ua)
+        tg = (-cl[0] * math.sin(ua), cl[1] * math.cos(ua))     # heading down-right
+        x0 = P0[0] - tg[0] * P0[1] / tg[1]
+        if x0 > foot:
+            hi = ua
+        else:
+            lo = ua
+    cut_a, _ = ring_cut(xl, yl, rxl, ryl, rxl - Cs, ryl - Ct, ua)
+    leg = diag(P0, (x0, 0), w, cut_a, 'h')
+    pts = [leg.start] + [s[1] for s in leg.segs]
+    pts = pts[:-1] if abs(pts[-1][0] - pts[0][0]) + abs(pts[-1][1] - pts[0][1]) < 1e-6 else pts
+    # the leg comes out from behind the "/" with the x's orbital gap
+    d = (b_top[0] - b_bot[0], b_top[1] - b_bot[1])
+    nn = _unit(-d[1], d[0])
+    off = wf / 2 + 0.38 * p.S + 8
+    G.add(poly(clip_half(pts, (b_bot[0] - nn[0] * off, b_bot[1] - nn[1] * off), d, (x0, 0))))
+
+
 @glyph('at', 0x40, ('R', 'R'))
 def g_at(p, G):
     S = p.S * 0.86
