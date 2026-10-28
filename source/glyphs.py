@@ -1178,6 +1178,24 @@ def g_question(p, G):
     G.add(b, rect(0, 2 * p.rd + 70, S, cy - ryi), dot(S / 2, p.rd - 4, p.rd))
 
 
+def invert(G):
+    """Turn ! or ? upside down so the dot sits at x-height."""
+    G.transform(rotate_fn(0, CAP / 2, 180))
+    G.transform(lambda q: (q[0], q[1] - (CAP - XH)))
+
+
+@glyph('exclamdown', 0xA1, ('S', 'S'))
+def g_exclamdown(p, G):
+    g_exclam(p, G)
+    invert(G)
+
+
+@glyph('questiondown', 0xBF, ('R', 'T'))
+def g_questiondown(p, G):
+    g_question(p, G)
+    invert(G)
+
+
 @glyph('quotesingle', 0x27)
 def g_qs(p, G):
     G.add(rect(0, 480, p.S * 0.9, CAP + 30))
@@ -1367,6 +1385,42 @@ def g_greater(p, G):
     G.add(*chevron(p, 230, 420))
     G.transform(rotate_fn(230, 0, -90))
     center_on_axis(G)
+
+
+def guillemet(p, G, deg, n):
+    """n small chevrons pointing left (deg=90) or right (deg=-90), on the
+    hyphen's height."""
+    h, depth, w = 160 + 0.75 * p.g, 190 + 0.9 * p.g, p.wd * 0.82
+    # legs are cut horizontally, so their horizontal thickness sets the
+    # spacing that keeps a clear gap between the pair
+    sp = w * math.hypot(h, depth) / h + 45 + 0.25 * p.g
+    for k in range(n):
+        cs, _ = zigzag([(0, 0, 0), (h, depth, 0.45 * p.S), (2 * h, 0, 0)], w)
+        f = rotate_fn(h, 0, deg)
+        G.add(*[c.map(lambda q, f=f, k=k: (f(q)[0] + k * sp, f(q)[1])) for c in cs])
+    _, y0, _, y1 = G.bounds()
+    dy = CY + 8 - (y0 + y1) / 2
+    G.transform(lambda q: (q[0], q[1] + dy))
+
+
+@glyph('guilsinglleft', 0x2039, ('D', 'D'))
+def g_guilsinglleft(p, G):
+    guillemet(p, G, 90, 1)
+
+
+@glyph('guilsinglright', 0x203A, ('D', 'D'))
+def g_guilsinglright(p, G):
+    guillemet(p, G, -90, 1)
+
+
+@glyph('guillemotleft', 0xAB, ('D', 'D'))
+def g_guillemotleft(p, G):
+    guillemet(p, G, 90, 2)
+
+
+@glyph('guillemotright', 0xBB, ('D', 'D'))
+def g_guillemotright(p, G):
+    guillemet(p, G, -90, 2)
 
 
 @glyph('multiply', 0xD7, ('D', 'D'))
