@@ -1044,6 +1044,63 @@ def f8(p, G):
 
 
 # =====================================================================
+# currency (tabular, so prices line up with the figures)
+# =====================================================================
+
+@fig_glyph('dollar', 0x24)
+def f_dollar(p, G):
+    R = p.R
+    G.add(*s_shape(CAP + 10, -10, R * 0.86, R * 0.93, p.Ct * 0.92, p.Cs * 0.97, share=0.47))
+    w, reach = 0.75 * p.S, 130 + 0.5 * p.g
+    G.add(rect(-w / 2, CAP - 20, w / 2, CAP + reach), rect(-w / 2, -reach, w / 2, 20))
+
+
+@fig_glyph('euro', 0x20AC)
+def f_euro(p, G):
+    R, H = p.R, p.H
+    rx, ry = R * 0.86, CAP / 2 + 10
+    cx = R - rx
+    rxi, ryi = rx - p.Cs, ry - p.Ct
+    off = min(0.62 * ry, ryi - 25)
+    G.add(band(cx, CAP / 2, rx, ry, rxi, ryi, ('h', CAP / 2 + off, 0.7), ('h', CAP / 2 - off, TAU - 0.7)))
+    o = (H + 0.7 * H + 20) / 2           # the gap between the bars grows with them
+    for y in (CAP / 2 - o, CAP / 2 + o):
+        G.add(rect(-R, y - H / 2, cx + 0.2 * rxi, y + H / 2))
+
+
+@fig_glyph('sterling', 0xA3)
+def f_sterling(p, G):
+    # the f's hook on a stem, a crossbar and a full-width foot
+    S, H, R = p.S, p.H, p.R
+    sL = -0.55 * R
+    rxo = 155 + 0.6 * p.g
+    ycH = CAP - 165 - 0.5 * p.g
+    ryo = CAP + 10 - ycH
+    hook = band(sL + rxo, ycH, rxo, ryo, rxo - S, ryo - p.Ct, ('a', PI + 0.06), ('a', 0.55))
+    yc = 0.42 * CAP
+    G.add(rect(sL, H - 2, sL + S, ycH), hook, rect(sL - 95, yc - H / 2, sL + S + 130, yc + H / 2),
+          rect(-R, 0, R, H))
+
+
+@fig_glyph('rupee', 0x20B9)
+def f_rupee(p, G):
+    # the headline rounds into the bowl (the ra hanging from its
+    # shirorekha), the second line stops flush with the bowl's outer edge,
+    # and the leg leaves the bowl's lower flat at its left end
+    R = p.R
+    h = p.H * 0.9                      # three stacked bars: a little lighter
+    ylo = 0.36 * CAP - 0.6 * p.g
+    ryo = (CAP - ylo) / 2
+    rxo = 0.85 * ryo
+    xf, cy = R - rxo, (CAP + ylo) / 2
+    G.add(*dbowl(-R, xf, ylo, CAP, rxo, p.Cs, h))
+    top2 = CAP - h - 0.6 * h
+    G.add(rect(-R, top2 - h, xf + rxo * math.sqrt(1 - ((top2 - cy) / ryo) ** 2), top2))
+    t, b = diag_fit(-R, ylo + h, 0.72 * R, 0, p.wd, -1, +1)
+    G.add(diag(t, b, p.wd))
+
+
+# =====================================================================
 # punctuation and symbols
 # =====================================================================
 
@@ -1067,6 +1124,21 @@ def comma_shape(p):
     cy = r - 4
     tail = poly([(r * 0.99, cy - r * 0.1), (r * 0.02, -132), (-r * 0.58, -118), (-r * 0.93, cy - r * 0.38)])
     return [dot(0, cy, r), tail]
+
+
+def comet(head, r, tail_end, tail_w):
+    """Round head with a straight tapering tail; the tail's edges are true
+    tangents to the head, so the two flow together without a corner."""
+    u = _unit(tail_end[0] - head[0], tail_end[1] - head[1])
+    n = (-u[1], u[0])
+    pts = []
+    for s in (1, -1):
+        E = (tail_end[0] + s * n[0] * tail_w / 2, tail_end[1] + s * n[1] * tail_w / 2)
+        b = math.atan2(E[1] - head[1], E[0] - head[0])
+        a = b + s * math.acos(r / math.hypot(E[0] - head[0], E[1] - head[1]))
+        pts.append((ept(head[0], head[1], r, r, a), E))
+    (T1, E1), (T2, E2) = pts
+    return [dot(head[0], head[1], r), poly([T1, E1, E2, T2])]
 
 
 @glyph('comma', 0x2C, ('D', 'D'))
@@ -1106,6 +1178,24 @@ def g_question(p, G):
     G.add(b, rect(0, 2 * p.rd + 70, S, cy - ryi), dot(S / 2, p.rd - 4, p.rd))
 
 
+def invert(G):
+    """Turn ! or ? upside down so the dot sits at x-height."""
+    G.transform(rotate_fn(0, CAP / 2, 180))
+    G.transform(lambda q: (q[0], q[1] - (CAP - XH)))
+
+
+@glyph('exclamdown', 0xA1, ('S', 'S'))
+def g_exclamdown(p, G):
+    g_exclam(p, G)
+    invert(G)
+
+
+@glyph('questiondown', 0xBF, ('R', 'T'))
+def g_questiondown(p, G):
+    g_question(p, G)
+    invert(G)
+
+
 @glyph('quotesingle', 0x27)
 def g_qs(p, G):
     G.add(rect(0, 480, p.S * 0.9, CAP + 30))
@@ -1143,6 +1233,15 @@ def g_qdr(p, G):
 def g_qdl(p, G):
     g_qdr(p, G)
     G.transform(rotate_fn(0, CAP + 30 - p.rd - 60, 180))
+
+
+@glyph('grave', 0x60, ('D', 'D'))
+def g_grave(p, G):
+    # a comet streaking down to the right
+    r = p.rd * 0.8
+    a = math.radians(-38)
+    head = (0, CAP + 30 - r)
+    G.add(*comet(head, r, (head[0] + 210 * math.cos(a), head[1] + 210 * math.sin(a)), 0.22 * r))
 
 
 @glyph('hyphen', 0x2D, ('D', 'D'))
@@ -1208,6 +1307,28 @@ def g_br(p, G):
     G.transform(mirror_x)
 
 
+@glyph('braceleft', 0x7B, ('R', 'D'))
+def g_bracel(p, G):
+    S, H = p.S, p.H
+    ym = 300                        # the parentheses' centre
+    rm, rc = S + 50, S + 70         # spur arc and corner arc, outer radii
+    xs = rm - S + 60                # stem left edge; the spur tip sits at x=0
+    cxm, cym = xs + S - rm, ym - H / 2 + rm
+    cxt, cyt = xs + rc, 770 - rc
+    half = [band(cxt, cyt, rc, rc, rc - S, rc - H, ('a', PI / 2), ('a', PI)),
+            rect(cxt - 1, 770 - H, xs + rc + 40, 770),
+            rect(xs, cym - 1, xs + S, cyt + 1),
+            band(cxm, cym, rm, rm, rm - S, rm - H, ('a', 0), ('a', -PI / 2)),
+            rect(0, ym - H / 2, cxm + 1, ym + H / 2)]
+    G.add(*half, *[c.map(lambda q: (q[0], 2 * ym - q[1])) for c in half])
+
+
+@glyph('braceright', 0x7D, ('D', 'R'))
+def g_bracer(p, G):
+    g_bracel(p, G)
+    G.transform(mirror_x)
+
+
 AXIS = 330
 
 
@@ -1222,6 +1343,23 @@ def g_equal(p, G):
     W = 460 + 0.2 * p.g
     o = p.H / 2 + 50
     G.add(rect(0, AXIS + o - p.H / 2, W, AXIS + o + p.H / 2), rect(0, AXIS - o - p.H / 2, W, AXIS - o + p.H / 2))
+
+
+@glyph('asciitilde', 0x7E, ('D', 'D'))
+def g_tilde(p, G):
+    # one period of a signal wave: two equal orbits meeting on a shared
+    # tangent at the centre, ends cut square to the stroke
+    Wc = 410 + 0.8 * p.g           # centreline end to end
+    A = 48 + 0.15 * p.g            # centreline amplitude
+    t = p.Ct
+    phi = 2 * math.atan(A / (Wc / 4))
+    rho = (Wc / 4) / math.sin(phi)
+    s, c = math.sin(phi), math.cos(phi)
+    ro, ri = rho + t / 2, rho - t / 2
+    e = 0.03
+    G.add(band(-rho * s, AXIS - rho * c, ro, ro, ri, ri, ('a', PI / 2 + phi), ('a', PI / 2 - phi - e)),
+          band(rho * s, AXIS + rho * c, ro, ro, ri, ri, ('a', 1.5 * PI - phi - e), ('a', 1.5 * PI + phi)))
+    center_on_axis(G)
 
 
 def chevron(p, h, depth):
@@ -1247,6 +1385,42 @@ def g_greater(p, G):
     G.add(*chevron(p, 230, 420))
     G.transform(rotate_fn(230, 0, -90))
     center_on_axis(G)
+
+
+def guillemet(p, G, deg, n):
+    """n small chevrons pointing left (deg=90) or right (deg=-90), on the
+    hyphen's height."""
+    h, depth, w = 160 + 0.75 * p.g, 190 + 0.9 * p.g, p.wd * 0.82
+    # legs are cut horizontally, so their horizontal thickness sets the
+    # spacing that keeps a clear gap between the pair
+    sp = w * math.hypot(h, depth) / h + 45 + 0.25 * p.g
+    for k in range(n):
+        cs, _ = zigzag([(0, 0, 0), (h, depth, 0.45 * p.S), (2 * h, 0, 0)], w)
+        f = rotate_fn(h, 0, deg)
+        G.add(*[c.map(lambda q, f=f, k=k: (f(q)[0] + k * sp, f(q)[1])) for c in cs])
+    _, y0, _, y1 = G.bounds()
+    dy = CY + 8 - (y0 + y1) / 2
+    G.transform(lambda q: (q[0], q[1] + dy))
+
+
+@glyph('guilsinglleft', 0x2039, ('D', 'D'))
+def g_guilsinglleft(p, G):
+    guillemet(p, G, 90, 1)
+
+
+@glyph('guilsinglright', 0x203A, ('D', 'D'))
+def g_guilsinglright(p, G):
+    guillemet(p, G, -90, 1)
+
+
+@glyph('guillemotleft', 0xAB, ('D', 'D'))
+def g_guillemotleft(p, G):
+    guillemet(p, G, 90, 2)
+
+
+@glyph('guillemotright', 0xBB, ('D', 'D'))
+def g_guillemotright(p, G):
+    guillemet(p, G, -90, 2)
 
 
 @glyph('multiply', 0xD7, ('D', 'D'))
@@ -1337,6 +1511,96 @@ def g_al(p, G):
     G.add(*arrow_up(p))
     G.transform(rotate_fn(0, CAP / 2, 90))
     G.transform(lambda q: (q[0], q[1] - CAP / 2 + AXIS))
+
+
+@glyph('asciicircum', 0x5E, ('D', 'D'))
+def g_circum(p, G):
+    # lift-off: the arrowhead of the up arrow, steeper and without its shaft
+    hw, dep = 210 + 0.5 * p.g, 290
+    cs, _ = zigzag([(-hw, CAP - dep, 0), (0, CAP, 0.55 * p.S), (hw, CAP - dep, 0)], p.wd * 0.95)
+    G.add(*cs)
+
+
+def _support(rx, ry, n):
+    return math.hypot(rx * n[0], ry * n[1])
+
+
+def _touch(cx, cy, rx, ry, m):
+    """Point of an ellipse whose outward normal is m, as a param angle."""
+    h = _support(rx, ry, m)
+    return math.atan2(ry * m[1] / h, rx * m[0] / h)
+
+
+def inner_tangent(c1, r1, c2, r2, lo, hi):
+    """Internal common tangent of two ellipses (c1 on the left of the line,
+    c2 on the right), for a line direction angle between lo and hi.
+    Returns (angle on 1, angle on 2)."""
+    def gap(th):
+        n = (-math.sin(th), math.cos(th))
+        return (n[0] * (c1[0] - c2[0]) + n[1] * (c1[1] - c2[1])
+                - _support(*r1, n) - _support(*r2, n))
+    glo = gap(lo)
+    for _ in range(60):
+        mid = (lo + hi) / 2
+        if (gap(mid) > 0) == (glo > 0):
+            lo = mid
+        else:
+            hi = mid
+    n = (-math.sin(lo), math.cos(lo))
+    return (_touch(*c1, *r1, (-n[0], -n[1])), _touch(*c2, *r2, n))
+
+
+def ring_cut(cx, cy, rxo, ryo, rxi, ryi, t):
+    """The radial cut of an elliptical ring at param angle t, as a 'line' cut."""
+    a, b = ept(cx, cy, rxo, ryo, t), ept(cx, cy, rxi, ryi, t)
+    return ('line', a, (b[0] - a[0], b[1] - a[1])), (b[0] - a[0], b[1] - a[1])
+
+
+@glyph('ampersand', 0x26, ('R', 'D'))
+def g_amp(p, G):
+    Cs, Ct, w, g = p.CsC, p.CtC, p.wdC, p.g
+    # upper loop: a closed ring
+    rxl, ryl = 165 + 0.9 * g, 160 + 0.5 * g
+    xl, yl = -95, CAP + OSC - ryl
+    G.add(ellipse(xl, yl, rxl, ryl)).hole(ellipse(xl, yl, rxl - Cs, ryl - Ct))
+    # lower bowl, open to the upper right, ending in a tail
+    rxb, ryb = 245 + 0.6 * g, 228 + 0.3 * g
+    xb, yb = 30, ryb - OSC
+    cl = (rxl - Cs / 2, ryl - Ct / 2)
+    cb = (rxb - Cs / 2, ryb - Ct / 2)
+    # "/" leaves the loop's lower right on a tangent and flows into the bowl
+    ul, ub = inner_tangent((xl, yl), cl, (xb, yb), cb, 0.2, 1.5)
+    cut_l, vl = ring_cut(xl, yl, rxl, ryl, rxl - Cs, ryl - Ct, ul)
+    cut_b, vb = ring_cut(xb, yb, rxb, ryb, rxb - Cs, ryb - Ct, ub)
+    ub = ub % TAU
+    G.add(band(xb, yb, rxb, ryb, rxb - Cs, ryb - Ct, ('a', ub - 0.05), ('h', 0.47 * CAP, TAU + 0.4)))
+    b_top, b_bot = ept(xl, yl, *cl, ul), ept(xb, yb, *cb, ub)
+    # as wide as the thinner of the two rings it joins, measured square to it
+    nb = _unit(b_bot[1] - b_top[1], b_top[0] - b_bot[0])
+    wf = min(abs(vl[0] * nb[0] + vl[1] * nb[1]), abs(vb[0] * nb[0] + vb[1] * nb[1]))
+    G.add(diag(b_top, b_bot, wf, cut_l, cut_b))
+    # "\" leaves the loop's lower left on a tangent and runs to the baseline,
+    # solved so its foot lands just past the bowl
+    foot = xb + rxb + 20
+    lo, hi = PI + 0.05, 1.5 * PI - 0.05
+    for _ in range(50):
+        ua = (lo + hi) / 2
+        P0 = ept(xl, yl, *cl, ua)
+        tg = (-cl[0] * math.sin(ua), cl[1] * math.cos(ua))     # heading down-right
+        x0 = P0[0] - tg[0] * P0[1] / tg[1]
+        if x0 > foot:
+            hi = ua
+        else:
+            lo = ua
+    cut_a, _ = ring_cut(xl, yl, rxl, ryl, rxl - Cs, ryl - Ct, ua)
+    leg = diag(P0, (x0, 0), w, cut_a, 'h')
+    pts = [leg.start] + [s[1] for s in leg.segs]
+    pts = pts[:-1] if abs(pts[-1][0] - pts[0][0]) + abs(pts[-1][1] - pts[0][1]) < 1e-6 else pts
+    # the leg comes out from behind the "/" with the x's orbital gap
+    d = (b_top[0] - b_bot[0], b_top[1] - b_bot[1])
+    nn = _unit(-d[1], d[0])
+    off = wf / 2 + 0.38 * p.S + 8
+    G.add(poly(clip_half(pts, (b_bot[0] - nn[0] * off, b_bot[1] - nn[1] * off), d, (x0, 0))))
 
 
 @glyph('at', 0x40, ('R', 'R'))

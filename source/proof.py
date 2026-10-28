@@ -59,4 +59,10 @@ if __name__ == '__main__':
         'x is a variable. kid is a constant. SCROLL TO INITIATE BURN ↑',
         'Past this point the sun is just another star, and the variable stops resolving. 0123456789',
     ], 'text')
+    text_sheet([
+        '{x} ~ ^ ` & $ € £ ₹',
+        'Fuel & oxygen: $4,200 · €3,900 · £3,100 · ₹350,000',
+        '¡Ya! ¿Listo? «go» ‹go› { x: ~0, y: x^2 } `orbit` (paren) [bracket]',
+        'Rocket & fuel cost $12, €10, £9 or ₹999. { `burn` ~ x^2 } ¡¿ «» ‹› \'quote\' ‘quote’',
+    ], 'symbols')
     print('ok')

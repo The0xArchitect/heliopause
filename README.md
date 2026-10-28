@@ -4,7 +4,7 @@ A geometric sans with a cosmic twist, designed by xKid for [xkid.org](https://xk
 
 ![Heliopause numerals](specimen.png)
 
-**v0.6** · Regular, SemiBold, Bold · [SIL Open Font License 1.1](OFL.txt)
+**v0.7** · Regular, SemiBold, Bold · [SIL Open Font License 1.1](OFL.txt)
 
 ## What's inside
 
@@ -38,7 +38,7 @@ Weights: 400 Regular, 600 SemiBold, 700 Bold. Open `web/specimen.html` in a brow
 | `ss04` | Orbit O, a capital O with a planet dot inside |
 | `kern` | Kerning for common pairs (on by default) |
 
-Figures are tabular by default, so clocks and counters never jitter.
+Figures and the currency signs `$ € £ ₹` are tabular by default, so clocks, counters and price columns never jitter.
 
 ## Installing on a Mac
 
@@ -52,9 +52,9 @@ In Figma, the alternates live in Type settings → Details → Stylistic sets.
 
 ## Character set
 
-A–Z, a–z, 0–9, basic punctuation, quotes, dashes, brackets, `+ = < > × * # % @ ° · •` and the arrows `← ↑ → ↓`.
+A–Z, a–z, 0–9 and all of printable ASCII, including `& $ { } ~ ^` and the backtick. On top of that: the currency signs `€ £ ₹`, `¡ ¿ « » ‹ ›`, curly quotes, dashes, `× ° · • …` and the arrows `← ↑ → ↓`.
 
-Not yet included: `& $ € £ ₹ { } ~ ^` and the backtick, plus accented letters.
+Accented letters aren't included: Heliopause is drawn for English.
 
 ## Building from source
 
