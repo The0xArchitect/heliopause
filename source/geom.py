@@ -383,6 +383,7 @@ class Glyph:
         self.holes = []
         self.sb = sb          # side bearing kinds or numbers
         self.fixed = None     # fixed advance (centred) e.g. tabular figures
+        self.raw = None       # fixed advance, outline kept exactly where drawn
         self.adv = 0
         self.empty_adv = None
 
@@ -415,6 +416,9 @@ class Glyph:
         return min(xs), min(ys), max(xs), max(ys)
 
     def finalize(self, sbmap):
+        if self.raw is not None:
+            self.adv = self.raw
+            return self
         if not self.fills:
             self.adv = self.empty_adv
             return self
