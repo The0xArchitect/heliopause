@@ -38,6 +38,11 @@ class P:
         self.sb = {'S': 74 - 10 * t, 'R': 46 - 6 * t, 'D': 22 - 4 * t,
                    'T': 32 - 4 * t, 'Z': 0}
 
+    def w(self, key, default):
+        """A width-bearing dimension. Heliopause uses the default; a
+        sibling family (Heliopause Mono) overrides it to fit its cell."""
+        return default
+
 
 REG = []
 
@@ -209,7 +214,11 @@ def zigzag(verts, w):
                 nl = _unit(-d[1], d[0])
                 side = 1 if (d[0] * v[1] - d[1] * v[0]) > 0 else -1
                 nn = (nl[0] * side, nl[1] * side)
-                if nn[1] * opening(k) > 0:
+                # the stroke's far edge must cross vertex A's line on the
+                # vertex side of its flat corner (outer edges meet the flat);
+                # unambiguous even for steep strokes
+                far = isect((PA[0] + nn[0] * w, PA[1] + nn[1] * w), d, (0, A[1]), (1, 0))
+                if (far[0] - PA[0]) * (A[0] - PA[0]) > 0:
                     best = (d, nn)
             d, nn = best
             E1 = (PA, d)
@@ -495,7 +504,7 @@ def g_l(p, G):
 @glyph('j', 0x6A, (-20, 'S'))
 def g_j(p, G):
     S = p.S
-    rxo = 175 + 0.5 * p.g
+    rxo = p.w('j.rx', 175 + 0.5 * p.g)
     sR = 0
     sL = -S
     cxT = sR - rxo
@@ -525,7 +534,7 @@ def g_t(p, G):
 @glyph('k', 0x6B, ('S', 'D'))
 def g_k(p, G):
     S, w = p.S, p.wd
-    W = S + 370 + 0.5 * p.g
+    W = p.w('k', S + 370 + 0.5 * p.g)
     xm = S / 2
     yj = 150
     hw = diag_hw(w, (W, XH), (xm, yj))
@@ -544,14 +553,14 @@ def g_k(p, G):
 
 @glyph('v', 0x76, ('D', 'D'))
 def g_v(p, G):
-    W = 480 + 0.7 * p.g
+    W = p.w('v', 480 + 0.7 * p.g)
     cs, _ = zigzag([(0, XH, 0), (W / 2, 0, 0.32 * p.S), (W, XH, 0)], p.wd)
     G.add(*cs)
 
 
 @glyph('w', 0x77, ('D', 'D'))
 def g_w(p, G):
-    W = 760 + 1.0 * p.g
+    W = p.w('w', 760 + 1.0 * p.g)
     f = 0.3 * p.S
     cs, _ = zigzag([(0, XH, 0), (W * 0.25, 0, f), (W * 0.5, XH, f), (W * 0.75, 0, f), (W, XH, 0)], p.wd * 0.96)
     G.add(*cs)
@@ -559,7 +568,7 @@ def g_w(p, G):
 
 @glyph('y', 0x79, ('D', 'D'))
 def g_y(p, G):
-    W = 490 + 0.7 * p.g
+    W = p.w('y', 490 + 0.7 * p.g)
     w = p.wd
     xJ = W * 0.47
     hw = diag_hw(w, (W, XH), (xJ, 0))
@@ -581,19 +590,19 @@ def g_y(p, G):
 
 @glyph('x', 0x78, ('D', 'D'))
 def g_x(p, G):
-    W = 470 + 0.7 * p.g
-    G.add(*crossed_x(p, W, XH, p.wd, 0.38 * p.S + 8))
+    W = p.w('x', 470 + 0.7 * p.g)
+    G.add(*crossed_x(p, W, XH, p.wd, p.w('x.gap', 0.38 * p.S + 8)))
 
 
 @glyph('x.plain', None, ('D', 'D'))
 def g_xplain(p, G):
-    W = 470 + 0.7 * p.g
+    W = p.w('x', 470 + 0.7 * p.g)
     G.add(*crossed_x(p, W, XH, p.wd, 0))
 
 
 @glyph('z', 0x7A, ('D', 'D'))
 def g_z(p, G):
-    G.add(*z_shape(420 + 0.5 * p.g, XH, p.H, p.wd * 1.02))
+    G.add(*z_shape(p.w('z', 420 + 0.5 * p.g), XH, p.H, p.wd * 1.02))
 
 
 @glyph('s', 0x73, ('R', 'R'))
@@ -606,13 +615,13 @@ def g_s(p, G):
 # =====================================================================
 
 def Orx(p):
-    return 362 + 0.5 * p.g
+    return p.w('Orx', 362 + 0.5 * p.g)
 
 
 @glyph('H', 0x48)
 def g_H(p, G):
     S = p.SC
-    W = 2 * S + 410 + 0.3 * p.g
+    W = p.w('H', 2 * S + 410 + 0.3 * p.g)
     G.add(rect(0, 0, S, CAP), rect(W - S, 0, W, CAP), rect(0, 365 - p.HC / 2, W, 365 + p.HC / 2))
 
 
@@ -623,27 +632,28 @@ def g_I(p, G):
 
 @glyph('L', 0x4C, ('S', 'D'))
 def g_L(p, G):
-    G.add(rect(0, 0, p.SC, CAP), rect(0, 0, p.SC + 350 + 0.3 * p.g, p.HC))
+    G.add(rect(0, 0, p.SC, CAP), rect(0, 0, p.w('L', p.SC + 350 + 0.3 * p.g), p.HC))
 
 
 @glyph('E', 0x45, ('S', 'D'))
 def g_E(p, G):
     S, H, g = p.SC, p.HC, p.g
-    G.add(rect(0, 0, S, CAP), rect(0, CAP - H, S + 350 + 0.3 * g, CAP),
-          rect(0, 360 - H / 2, S + 310 + 0.3 * g, 360 + H / 2), rect(0, 0, S + 370 + 0.3 * g, H))
+    G.add(rect(0, 0, S, CAP), rect(0, CAP - H, p.w('E', S + 350 + 0.3 * g), CAP),
+          rect(0, 360 - H / 2, p.w('E.mid', S + 310 + 0.3 * g), 360 + H / 2),
+          rect(0, 0, p.w('E.bot', S + 370 + 0.3 * g), H))
 
 
 @glyph('F', 0x46, ('S', 'D'))
 def g_F(p, G):
     S, H, g = p.SC, p.HC, p.g
-    G.add(rect(0, 0, S, CAP), rect(0, CAP - H, S + 340 + 0.3 * g, CAP),
-          rect(0, 340 - H / 2, S + 290 + 0.3 * g, 340 + H / 2))
+    G.add(rect(0, 0, S, CAP), rect(0, CAP - H, p.w('F', S + 340 + 0.3 * g), CAP),
+          rect(0, 340 - H / 2, p.w('F.mid', S + 290 + 0.3 * g), 340 + H / 2))
 
 
 @glyph('T', 0x54, ('D', 'D'))
 def g_T(p, G):
     S, H = p.SC, p.HC
-    W = 580 + 0.4 * p.g
+    W = p.w('T', 580 + 0.4 * p.g)
     G.add(rect(0, CAP - H, W, CAP), rect(W / 2 - S / 2, 0, W / 2 + S / 2, CAP))
 
 
@@ -687,33 +697,33 @@ def g_G(p, G):
 @glyph('D', 0x44, ('S', 'R'))
 def g_D(p, G):
     S = p.SC
-    xf = S + 90
-    G.add(rect(0, 0, S, CAP), *dbowl(0, xf, 0, CAP, 300 + 0.5 * p.g, p.CsC, p.HC))
+    xf = p.w('D.xf', S + 90)
+    G.add(rect(0, 0, S, CAP), *dbowl(0, xf, 0, CAP, p.w('D.rx', 300 + 0.5 * p.g), p.CsC, p.HC))
 
 
 @glyph('B', 0x42, ('S', 'R'))
 def g_B(p, G):
     S, H = p.SC, p.HC
     ym = 395
-    xf = S + 70
+    xf = p.w('B.xf', S + 70)
     G.add(rect(0, 0, S, CAP),
-          *dbowl(0, xf, ym - H / 2, CAP, 205 + 0.4 * p.g, p.CsC, H),
-          *dbowl(0, xf, 0, ym + H / 2, 240 + 0.45 * p.g, p.CsC, H))
+          *dbowl(0, xf, ym - H / 2, CAP, p.w('B.rxu', 205 + 0.4 * p.g), p.CsC, H),
+          *dbowl(0, xf, 0, ym + H / 2, p.w('B.rxl', 240 + 0.45 * p.g), p.CsC, H))
 
 
 @glyph('P', 0x50, ('S', 'R'))
 def g_P(p, G):
     S = p.SC
-    G.add(rect(0, 0, S, CAP), *dbowl(0, S + 80, 290, CAP, 250 + 0.45 * p.g, p.CsC, p.HC))
+    G.add(rect(0, 0, S, CAP), *dbowl(0, p.w('P.xf', S + 80), 290, CAP, p.w('P.rx', 250 + 0.45 * p.g), p.CsC, p.HC))
 
 
 @glyph('R', 0x52, ('S', 'D'))
 def g_R(p, G):
     S, H = p.SC, p.HC
-    xf = S + 80
-    rx = 250 + 0.45 * p.g
+    xf = p.w('R.xf', S + 80)
+    rx = p.w('R.rx', 250 + 0.45 * p.g)
     yb = 290
-    Wr = xf + rx + 25
+    Wr = xf + rx + p.w('R.leg', 25)
     top = (xf + 30, yb + H / 2)
     hl = diag_hw(p.wdC, top, (Wr, 0))
     for _ in range(5):
@@ -729,7 +739,7 @@ def g_S(p, G):
 @glyph('U', 0x55)
 def g_U(p, G):
     S = p.SC
-    W = 2 * S + 400 + 0.3 * p.g
+    W = p.w('U', 2 * S + 400 + 0.3 * p.g)
     yc = 300
     ryo = yc + OSC
     b = band(W / 2, yc, W / 2, ryo, W / 2 - S, ryo - p.CtC, ('a', PI - 0.03), ('a', TAU + 0.03))
@@ -739,7 +749,7 @@ def g_U(p, G):
 @glyph('J', 0x4A, ('D', 'S'))
 def g_J(p, G):
     S = p.SC
-    rxo = 200 + 0.4 * p.g
+    rxo = p.w('J.rx', 200 + 0.4 * p.g)
     sR, sL = 0, -S
     cx = sR - rxo
     yc = 240
@@ -750,9 +760,9 @@ def g_J(p, G):
 
 @glyph('A', 0x41, ('D', 'D'))
 def g_A(p, G):
-    W = 660 + 0.6 * p.g
-    cs, lines = zigzag([(0, 0, 0), (W / 2, CAP, 0.4 * p.SC), (W, 0, 0)], p.wdC)
-    yb = 215
+    W = p.w('A', 660 + 0.6 * p.g)
+    cs, lines = zigzag([(0, 0, 0), (W / 2, CAP, p.w('A.flat', 0.4 * p.SC)), (W, 0, 0)], p.wdC)
+    yb = p.w('A.yb', 215)
     x0 = line_x(lines[0], yb + p.HC / 2)
     x1 = line_x(lines[1], yb + p.HC / 2)
     G.add(*cs, rect(x0, yb, x1, yb + p.HC))
@@ -760,14 +770,14 @@ def g_A(p, G):
 
 @glyph('V', 0x56, ('D', 'D'))
 def g_V(p, G):
-    W = 650 + 0.6 * p.g
+    W = p.w('V', 650 + 0.6 * p.g)
     cs, _ = zigzag([(0, CAP, 0), (W / 2, 0, 0.4 * p.SC), (W, CAP, 0)], p.wdC)
     G.add(*cs)
 
 
 @glyph('W', 0x57, ('D', 'D'))
 def g_W(p, G):
-    W = 1010 + 0.9 * p.g
+    W = p.w('W', 1010 + 0.9 * p.g)
     f = 0.35 * p.SC
     cs, _ = zigzag([(0, CAP, 0), (W * 0.25, 0, f), (W * 0.5, CAP, f), (W * 0.75, 0, f), (W, CAP, 0)], p.wdC * 0.95)
     G.add(*cs)
@@ -776,7 +786,7 @@ def g_W(p, G):
 @glyph('M', 0x4D)
 def g_M(p, G):
     S = p.SC
-    W = 2 * S + 540 + 0.5 * p.g
+    W = p.w('M', 2 * S + 540 + 0.5 * p.g)
     cs, _ = zigzag([(0, CAP, 0), (W / 2, 0, 0.4 * S), (W, CAP, 0)], p.wdC * 0.95)
     G.add(rect(0, 0, S, CAP), rect(W - S, 0, W, CAP), *cs)
 
@@ -784,14 +794,14 @@ def g_M(p, G):
 @glyph('N', 0x4E)
 def g_N(p, G):
     S = p.SC
-    W = 2 * S + 400 + 0.3 * p.g
+    W = p.w('N', 2 * S + 400 + 0.3 * p.g)
     t, b = diag_fit(0, CAP, W, 0, p.wdC, -1, +1)
     G.add(rect(0, 0, S, CAP), rect(W - S, 0, W, CAP), diag(t, b, p.wdC))
 
 
 @glyph('X', 0x58, ('D', 'D'))
 def g_X(p, G):
-    W = 620 + 0.6 * p.g
+    W = p.w('X', 620 + 0.6 * p.g)
     t1, b1 = diag_fit(0, CAP, W, 0, p.wdC, -1, +1)
     t2, b2 = diag_fit(W, CAP, 0, 0, p.wdC, +1, -1)
     G.add(diag(t1, b1, p.wdC), diag(t2, b2, p.wdC))
@@ -800,7 +810,7 @@ def g_X(p, G):
 @glyph('Y', 0x59, ('D', 'D'))
 def g_Y(p, G):
     S = p.SC
-    W = 640 + 0.6 * p.g
+    W = p.w('Y', 640 + 0.6 * p.g)
     yj = 300
     cs, _ = zigzag([(0, CAP, 0), (W / 2, yj, S), (W, CAP, 0)], p.wdC)
     G.add(*cs, rect(W / 2 - S / 2, 0, W / 2 + S / 2, yj + 2))
@@ -825,13 +835,13 @@ def z_shape(W, top, H, w):
 
 @glyph('Z', 0x5A, ('D', 'D'))
 def g_Z(p, G):
-    G.add(*z_shape(560 + 0.5 * p.g, CAP, p.HC, p.wdC * 1.02))
+    G.add(*z_shape(p.w('Z', 560 + 0.5 * p.g), CAP, p.HC, p.wdC * 1.02))
 
 
 @glyph('K', 0x4B, ('S', 'D'))
 def g_K(p, G):
     S, w = p.SC, p.wdC
-    W = S + 470 + 0.5 * p.g
+    W = p.w('K', S + 470 + 0.5 * p.g)
     xm = S / 2
     yj = 200
     hw = diag_hw(w, (W, CAP), (xm, yj))
@@ -1158,7 +1168,7 @@ def g_semicolon(p, G):
 
 @glyph('ellipsis', 0x2026, ('D', 'D'))
 def g_ellipsis(p, G):
-    sp = p.rd * 2 + 70
+    sp = p.w('ellipsis', p.rd * 2 + 70)
     G.add(*[dot(i * sp, p.rd - 4, p.rd) for i in range(3)])
 
 
@@ -1246,22 +1256,22 @@ def g_grave(p, G):
 
 @glyph('hyphen', 0x2D, ('D', 'D'))
 def g_hyphen(p, G):
-    G.add(rect(0, CY + 8 - p.H / 2, 290 + 0.3 * p.g, CY + 8 + p.H / 2))
+    G.add(rect(0, CY + 8 - p.H / 2, p.w('hyphen', 290 + 0.3 * p.g), CY + 8 + p.H / 2))
 
 
 @glyph('endash', 0x2013, ('Z', 'Z'))
 def g_endash(p, G):
-    G.add(rect(0, CY + 8 - p.H / 2, 500, CY + 8 + p.H / 2))
+    G.add(rect(0, CY + 8 - p.H / 2, p.w('endash', 500), CY + 8 + p.H / 2))
 
 
 @glyph('emdash', 0x2014, ('Z', 'Z'))
 def g_emdash(p, G):
-    G.add(rect(0, CY + 8 - p.H / 2, 1000, CY + 8 + p.H / 2))
+    G.add(rect(0, CY + 8 - p.H / 2, p.w('emdash', 1000), CY + 8 + p.H / 2))
 
 
 @glyph('underscore', 0x5F, ('Z', 'Z'))
 def g_us(p, G):
-    G.add(rect(0, -170, 520, -170 + p.H))
+    G.add(rect(0, -170, p.w('underscore', 520), -170 + p.H))
 
 
 @glyph('slash', 0x2F, ('D', 'D'))
@@ -1349,7 +1359,7 @@ def g_equal(p, G):
 def g_tilde(p, G):
     # one period of a signal wave: two equal orbits meeting on a shared
     # tangent at the centre, ends cut square to the stroke
-    Wc = 410 + 0.8 * p.g           # centreline end to end
+    Wc = p.w('tilde', 410 + 0.8 * p.g)   # centreline end to end
     A = 48 + 0.15 * p.g            # centreline amplitude
     t = p.Ct
     phi = 2 * math.atan(A / (Wc / 4))
@@ -1375,14 +1385,14 @@ def center_on_axis(G):
 
 @glyph('less', 0x3C, ('D', 'D'))
 def g_less(p, G):
-    G.add(*chevron(p, 230, 420))
+    G.add(*chevron(p, 230, p.w('less', 420)))
     G.transform(rotate_fn(230, 0, 90))
     center_on_axis(G)
 
 
 @glyph('greater', 0x3E, ('D', 'D'))
 def g_greater(p, G):
-    G.add(*chevron(p, 230, 420))
+    G.add(*chevron(p, 230, p.w('less', 420)))
     G.transform(rotate_fn(230, 0, -90))
     center_on_axis(G)
 
@@ -1448,16 +1458,16 @@ def g_asterisk(p, G):
 def g_hash(p, G):
     w = p.wd * 0.9
     H = p.H * 0.92
-    W = 560 + 0.2 * p.g
+    W = p.w('numbersign', 560 + 0.2 * p.g)
     G.add(diag((W * 0.38, CAP), (W * 0.25, 0), w), diag((W * 0.75, CAP), (W * 0.62, 0), w),
           rect(0, 450, W, 450 + H), rect(0, 220, W, 220 + H))
 
 
 @glyph('percent', 0x25, ('D', 'D'))
 def g_percent(p, G):
-    ro = 125 + 0.3 * p.g
+    ro = p.w('percent.r', 125 + 0.3 * p.g)
     th = p.S * 0.85
-    W = 640 + 0.4 * p.g
+    W = p.w('percent', 640 + 0.4 * p.g)
     G.add(ellipse(ro, CAP - ro, ro, ro), ellipse(W - ro, ro, ro, ro))
     G.hole(ellipse(ro, CAP - ro, ro - th, ro - th), ellipse(W - ro, ro, ro - th, ro - th))
     t, b = diag_fit(W - 40, CAP, 40, 0, p.wd * 0.85, +1, -1)
@@ -1483,7 +1493,7 @@ def g_pc(p, G):
 
 def arrow_up(p):
     S = p.S
-    head = 250 + 0.9 * p.g
+    head = p.w('arrow.head', 250 + 0.9 * p.g)
     cs, _ = zigzag([(-head, CAP - head, 0), (0, CAP, 0.55 * S), (head, CAP - head, 0)], p.wd * 0.95)
     return [rect(-S / 2, 0, S / 2, CAP - 25)] + cs
 
@@ -1558,14 +1568,14 @@ def ring_cut(cx, cy, rxo, ryo, rxi, ryi, t):
 
 @glyph('ampersand', 0x26, ('R', 'D'))
 def g_amp(p, G):
-    Cs, Ct, w, g = p.CsC, p.CtC, p.wdC, p.g
+    Cs, Ct, w, g = p.w('amp.Cs', p.CsC), p.w('amp.Ct', p.CtC), p.w('amp.wd', p.wdC), p.g
     # upper loop: a closed ring
-    rxl, ryl = 165 + 0.9 * g, 160 + 0.5 * g
-    xl, yl = -95, CAP + OSC - ryl
+    rxl, ryl = p.w('amp.rxl', 165 + 0.9 * g), p.w('amp.ryl', 160 + 0.5 * g)
+    xl, yl = p.w('amp.xl', -95), CAP + OSC - ryl
     G.add(ellipse(xl, yl, rxl, ryl)).hole(ellipse(xl, yl, rxl - Cs, ryl - Ct))
     # lower bowl, open to the upper right, ending in a tail
-    rxb, ryb = 245 + 0.6 * g, 228 + 0.3 * g
-    xb, yb = 30, ryb - OSC
+    rxb, ryb = p.w('amp.rxb', 245 + 0.6 * g), 228 + 0.3 * g
+    xb, yb = p.w('amp.xb', 30), ryb - OSC
     cl = (rxl - Cs / 2, ryl - Ct / 2)
     cb = (rxb - Cs / 2, ryb - Ct / 2)
     # "/" leaves the loop's lower right on a tangent and flows into the bowl
@@ -1581,7 +1591,7 @@ def g_amp(p, G):
     G.add(diag(b_top, b_bot, wf, cut_l, cut_b))
     # "\" leaves the loop's lower left on a tangent and runs to the baseline,
     # solved so its foot lands just past the bowl
-    foot = xb + rxb + 20
+    foot = xb + rxb + p.w('amp.foot', 20)
     lo, hi = PI + 0.05, 1.5 * PI - 0.05
     for _ in range(50):
         ua = (lo + hi) / 2
@@ -1639,6 +1649,11 @@ def g_at(p, G):
 @glyph('.notdef', None, ('S', 'S'))
 def g_notdef(p, G):
     G.add(rect(0, 0, 440, CAP)).hole(rect(p.S * 0.7, p.S * 0.7, 440 - p.S * 0.7, CAP - p.S * 0.7))
+
+
+def glyph_table():
+    """Registered glyphs in order, as {name: (unicode, sidebearings, draw)}."""
+    return {name: (uni, sb, f) for name, uni, sb, f in REG}
 
 
 def build_glyphs(S):

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heliopause Mono specimen</title>
+<link rel="stylesheet" href="heliopause.css">
+<link rel="stylesheet" href="heliopause-mono.css">
+<style>
+  :root { --bg: #06070e; --fg: #e9ecf5; --muted: #8b91a8; --line: #1c2136; --amber: #ffb547; --panel: #0b0d18; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font-family: 'Heliopause Mono', ui-monospace, monospace; }
+  main { max-width: 1120px; margin: 0 auto; padding: 56px 24px 96px; }
+  .hud { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 13px; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+  .hud b { color: var(--amber); font-weight: 600; }
+  h1 { font-size: clamp(48px, 10vw, 120px); line-height: 1; font-weight: 700; margin: 40px 0 12px; }
+  .lede { font-family: 'Heliopause', system-ui, sans-serif; font-size: clamp(20px, 3vw, 26px); line-height: 1.45; color: #c7cbd9; max-width: 760px; margin: 0; }
+  section { border-top: 1px solid var(--line); margin-top: 56px; padding-top: 28px; }
+  .label { font-size: 13px; letter-spacing: .1em; color: var(--amber); font-weight: 600; margin: 0 0 18px; }
+  .weights { display: grid; gap: 8px; }
+  .weights p { margin: 0; font-size: clamp(28px, 5.5vw, 56px); line-height: 1.15; }
+  .grid { font-size: clamp(22px, 4.2vw, 40px); line-height: 1.4; word-break: break-all; margin: 0; }
+  .confuse { font-size: clamp(40px, 9vw, 88px); letter-spacing: 0; margin: 0; }
+  pre { margin: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 22px 24px;
+        font: inherit; font-size: clamp(13px, 2vw, 17px); line-height: 1.6; color: #d3d6e2; overflow-x: auto; }
+  .k { color: var(--amber); } .c { color: var(--muted); } .s { color: #9fd7b9; }
+  .ligs { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .ligs div { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px 10px 10px; text-align: center; }
+  .ligs b { display: block; font-weight: 400; font-size: 40px; line-height: 1.2; }
+  .ligs span { color: var(--muted); font-size: 13px; }
+  .toggle { font: inherit; font-size: 14px; color: var(--fg); background: var(--panel); border: 1px solid var(--line);
+            border-radius: 999px; padding: 8px 16px; cursor: pointer; margin-bottom: 18px; }
+  .toggle:hover { border-color: var(--amber); }
+  .note { font-family: 'Heliopause', system-ui, sans-serif; color: var(--muted); font-size: 14px; letter-spacing: .02em; margin: 14px 0 0; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 14px; }
+  footer a { color: inherit; }
+</style>
+</head>
+<body>
+<main>
+  <div class="hud"><span>WAYPOINT 00 / TYPE SPECIMEN</span><span><b>●</b> HELIOPAUSE MONO · v0.8</span></div>
+  <h1>Heliopause Mono</h1>
+  <p class="lede">The same orbits, signal dots and planet zero as Heliopause, set on a fixed 600-unit grid for code and terminals.</p>
+
+  <section>
+    <p class="label">THREE WEIGHTS</p>
+    <div class="weights">
+      <p style="font-weight:400">Regular · burn(x);</p>
+      <p style="font-weight:600">SemiBold · orbit::lock</p>
+      <p style="font-weight:700">Bold · 0x1F -> sun</p>
+    </div>
+  </section>
+
+  <section>
+    <p class="label">CODE</p>
+    <button class="toggle" id="liga" type="button">Ligatures: on</button>
+    <pre id="code"><span class="c"># every glyph is one cell wide, ligatures included</span>
+<span class="k">def</span> burn(fuel: float, x: int = 0x1F) -> bool:
+    <span class="s">"""Scroll to initiate burn."""</span>
+    <span class="k">if</span> fuel >= 0.5 <span class="k">and</span> x != 42 <span class="k">or</span> fuel <= -1:
+        <span class="k">return</span> orbit[x] == <span class="s">"lock"</span>
+    <span class="k">while</span> t < 9_000: t += 1    <span class="c"># T+ 00:42:07</span>
+
+<span class="k">const</span> v = (dist / dt) => { <span class="k">return</span> v ?? <span class="k">null</span>; };   <span class="c">// 4.06 AU</span>
+signal |> decode |> log;  std::vector&lt;int&gt; ring;  a <=> b;  x !== y;</pre>
+  </section>
+
+  <section>
+    <p class="label">LIGATURES · CALT</p>
+    <div class="ligs">
+      <div><b>-></b><span>-&gt;</span></div>
+      <div><b><-</b><span>&lt;-</span></div>
+      <div><b><-></b><span>&lt;-&gt;</span></div>
+      <div><b>=></b><span>=&gt;</span></div>
+      <div><b><=></b><span>&lt;=&gt;</span></div>
+      <div><b>>=</b><span>&gt;=</span></div>
+      <div><b><=</b><span>&lt;=</span></div>
+      <div><b>==</b><span>==</span></div>
+      <div><b>===</b><span>===</span></div>
+      <div><b>!=</b><span>!=</span></div>
+      <div><b>!==</b><span>!==</span></div>
+      <div><b>::</b><span>::</span></div>
+      <div><b>|></b><span>|&gt;</span></div>
+      <div><b><|</b><span>&lt;|</span></div>
+    </div>
+    <p class="note">Ligatures never fire next to another operator, so &lt;!--, --&gt;, ==== and &gt;&gt;= stay as plain characters. Turn them off with font-variant-ligatures: none, the .no-ligatures class, or your editor's ligature setting.</p>
+  </section>
+
+  <section>
+    <p class="label">TELL THEM APART</p>
+    <p class="confuse no-ligatures">il1I|! 0Oo rnm</p>
+    <p class="note">l ends in an orbit foot, i and 1 stand on a bar, I has slabs, and the 0 keeps its planet dot.</p>
+  </section>
+
+  <section>
+    <p class="label">CHARACTER SET</p>
+    <p class="grid no-ligatures">ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>abcdefghijklmnopqrstuvwxyz<br>0123456789 $€£₹<br>.,:;!?¡¿'"‘’“”…«»‹›<br>()[]{}/\|-–—_ &amp;+=&lt;&gt;~^`×*#%@ °·• ←↑→↓</p>
+  </section>
+
+  <footer>Heliopause Mono v0.8 · designed by xKid for xkid.org · <a href="specimen.html">Heliopause</a></footer>
+</main>
+<script>
+  const btn = document.getElementById('liga');
+  const code = document.getElementById('code');
+  btn.addEventListener('click', () => {
+    const off = code.classList.toggle('no-ligatures');
+    btn.textContent = 'Ligatures: ' + (off ? 'off' : 'on');
+  });
+</script>
+</body>
+</html>
