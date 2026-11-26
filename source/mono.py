@@ -11,7 +11,7 @@ import math
 
 from geom import PI, TAU, rect, poly, ellipse, ept, band, diag, diag_fit, Glyph, rotate_fn
 from glyphs import (P, XH, CAP, ASC, DESC, OS, OSC, CY, RYO, AXIS, glyph_table, arch, zigzag,
-                    s_shape, dot, f1, crossed_x)
+                    s_shape, dot, f1, crossed_x, g_O, g_Oplain)
 
 CELL = 600
 
@@ -60,6 +60,11 @@ class PMono(P):
 
 
 MONO = {}       # name -> (unicode, draw)
+
+# Heliopause alternates the mono names differently. Heliopause's O carries
+# the planet dot and ss04 gives O.plain; in code the dot has to mean zero,
+# so the mono's O stays plain and its ss04 gives the dotted O.dot.
+RENAME = {'O.plain': 'O.dot'}
 
 
 def mono_glyph(name, uni=None):
@@ -309,12 +314,23 @@ def m_at(p, G):
 # assembly
 # =====================================================================
 
+@mono_glyph('O', 0x4F)
+def m_O(p, G):
+    g_Oplain(p, G)
+
+
+@mono_glyph('O.dot')
+def m_Odot(p, G):
+    g_O(p, G)
+
+
 def build_mono_glyphs(S, extra=()):
     """Draw every glyph for stem S. `extra` is a list of (name, draw) for
     glyphs that keep their own advance and position (ligatures, spacers)."""
     p = PMono(S)
     out = []
     for name, (uni, sb, f) in glyph_table().items():
+        name = RENAME.get(name, name)
         if name in MONO:
             uni, f = MONO[name][0] if MONO[name][0] is not None else uni, MONO[name][1]
         G = Glyph(name, [uni] if uni else [], sb)

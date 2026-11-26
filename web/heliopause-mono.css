@@ -1,4 +1,4 @@
-/* Heliopause Mono by xKid, v0.8
+/* Heliopause Mono by xKid, v0.9
    Put the .woff2 files next to this CSS (or fix the paths), then:
    font-family: 'Heliopause Mono', ui-monospace, monospace;      */
 
@@ -30,8 +30,9 @@
    Code ligatures (-> => != >= :: |> ...) are on by default (calt).
    .no-ligatures -> every character drawn on its own
    .plain-zero   -> 0 without the planet dot (the dotted 0 is the default)
-   .plain-x      -> x without the orbital cross */
+   .plain-x      -> x without the orbital cross
+   .orbit-o      -> O with a planet dot (plain by default, so the dot means zero) */
 .no-ligatures { font-variant-ligatures: none; font-feature-settings: "calt" 0; }
 .plain-zero   { font-feature-settings: "ss02" 1; }
 .plain-x      { font-feature-settings: "ss03" 1; }
-.orbit-o      { font-feature-settings: "ss04" 1; }  /* O with a planet dot */
+.orbit-o      { font-feature-settings: "ss04" 1; }
