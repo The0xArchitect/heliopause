@@ -21,7 +21,7 @@ from mono import build_mono_glyphs, CELL
 from ligatures import LIGATURES, calt_fea
 
 FAMILY = 'Heliopause'
-VERSION = '0.8'
+VERSION = '0.9'
 ROOT = os.path.join(os.path.dirname(__file__), '..')
 OUT = {'otf': os.path.join(ROOT, 'otf'),
        'ttf': os.path.join(ROOT, 'ttf'),
@@ -43,15 +43,26 @@ feature ss02 {
   sub zero by zero.plain;
 } ss02;
 
-feature ss04 {
-  featureNames { name "Orbit O"; };
-  sub O by O.dot;
-} ss04;
-
 feature ss03 {
   featureNames { name "Plain x"; };
   sub x by x.plain;
 } ss03;
+"""
+
+# Heliopause's O carries the planet dot; the mono keeps a plain O so the dot
+# only ever means zero in code. ss04 swaps to the other one in each family.
+SS04_SANS = """
+feature ss04 {
+  featureNames { name "Plain O"; };
+  sub O by O.plain;
+} ss04;
+"""
+
+SS04_MONO = """
+feature ss04 {
+  featureNames { name "Orbit O"; };
+  sub O by O.dot;
+} ss04;
 """
 
 
@@ -59,14 +70,14 @@ FAMILIES = {
     'Heliopause': {
         'ps': 'Heliopause',
         'glyphs': build_glyphs,
-        'features': lambda glyphs, p: FEA_BASE + kern_fea(glyphs, p),
+        'features': lambda glyphs, p: FEA_BASE + SS04_SANS + kern_fea(glyphs, p),
         'description': 'A geometric sans with a cosmic twist, made for xkid.org.',
         'mono': False,
     },
     'Heliopause Mono': {
         'ps': 'HeliopauseMono',
         'glyphs': lambda S: build_mono_glyphs(S, LIGATURES),
-        'features': lambda glyphs, p: FEA_BASE + calt_fea(glyphs),
+        'features': lambda glyphs, p: FEA_BASE + SS04_MONO + calt_fea(glyphs),
         'description': 'The monospaced Heliopause, for code and terminals, made for xkid.org.',
         'mono': True,
     },

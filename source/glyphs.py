@@ -659,14 +659,15 @@ def g_T(p, G):
 
 @glyph('O', 0x4F, ('R', 'R'))
 def g_O(p, G):
+    # default O carries the planet dot, like zero
+    g_Oplain(p, G)
+    G.add(dot(0, CAP / 2, p.rd * 0.95))
+
+
+@glyph('O.plain', None, ('R', 'R'))
+def g_Oplain(p, G):
     rx, ry = Orx(p), CAP / 2 + OSC
     G.add(ellipse(0, CAP / 2, rx, ry)).hole(ellipse(0, CAP / 2, rx - p.CsC, ry - p.CtC))
-
-
-@glyph('O.dot', None, ('R', 'R'))
-def g_Odot(p, G):
-    g_O(p, G)
-    G.add(dot(0, CAP / 2, p.rd * 0.95))
 
 
 @glyph('Q', 0x51, ('R', 'R'))

@@ -6,7 +6,7 @@ A geometric sans with a cosmic twist, designed by xKid for [xkid.org](https://xk
 
 ![Heliopause numerals](specimen.png)
 
-**v0.8** · Regular, SemiBold, Bold, for both Heliopause and Heliopause Mono · [SIL Open Font License 1.1](OFL.txt)
+**v0.9** · Regular, SemiBold, Bold, for both Heliopause and Heliopause Mono · [SIL Open Font License 1.1](OFL.txt)
 
 ## What's inside
 
@@ -37,21 +37,21 @@ Weights: 400 Regular, 600 SemiBold, 700 Bold. Open `web/specimen.html` in a brow
 | --- | --- |
 | `ss02` | Plain zero (the default 0 has a planet dot inside) |
 | `ss03` | Plain x without the orbital cross, for code and math |
-| `ss04` | Orbit O, a capital O with a planet dot inside |
+| `ss04` | Plain O (the default O has a planet dot inside, like the zero). In Heliopause Mono it works the other way: O is plain by default and `ss04` adds the dot |
 | `kern` | Kerning for common pairs (on by default) |
 
 Figures and the currency signs `$ € £ ₹` are tabular by default, so clocks, counters and price columns never jitter.
 
 ## Heliopause Mono
 
-Every character is exactly one cell wide (600 units), so code lines up in columns. It has the same character set and stylistic sets as Heliopause, including the dotted zero and the orbital-cross x. It has no kerning, since a monospace can't kern.
+Every character is exactly one cell wide (600 units), so code lines up in columns. It has the same character set and stylistic sets as Heliopause, including the dotted zero and the orbital-cross x. The one difference is the capital O, which is plain by default. It has no kerning, since a monospace can't kern.
 
 Where Heliopause relies on context, the mono disambiguates:
 
 - **l** ends in an orbit foot.
 - **i** and **1** stand on a bar.
 - **I** has top and bottom slabs.
-- **0** keeps its planet dot.
+- **0** keeps its planet dot, and **O** stays plain, so in code the dot always means zero.
 
 ### In your editor
 

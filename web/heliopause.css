@@ -1,4 +1,4 @@
-/* Heliopause by xKid, v0.8
+/* Heliopause by xKid, v0.9
    Put the .woff2 files next to this CSS (or fix the paths), then:
    font-family: 'Heliopause', system-ui, sans-serif;            */
 
@@ -29,7 +29,8 @@
 /* Optional extras
    .plain-zero  -> 0 without the planet dot (the dotted 0 is the default)
    .plain-x     -> x without the orbital cross (for code or math)
+   .plain-o     -> O without the planet dot (the dotted O is the default)
    .hud-numbers -> already tabular by default, so clocks never jitter */
 .plain-zero { font-feature-settings: "ss02" 1; }
 .plain-x    { font-feature-settings: "ss03" 1; }
-.orbit-o    { font-feature-settings: "ss04" 1; }  /* O with a planet dot */
+.plain-o    { font-feature-settings: "ss04" 1; }
